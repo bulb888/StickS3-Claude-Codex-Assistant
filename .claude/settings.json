@@ -1,0 +1,50 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Write|Edit|Glob|Grep|WebFetch|WebSearch|TaskCreate|TaskUpdate|TaskGet|TaskList|TaskStop|TaskOutput|Agent|Skill|ScheduleWakeup|ToolSearch|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"helper/hook_notify.py\"",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Read|Write|Edit|Glob|Grep|WebFetch|WebSearch|TaskCreate|TaskUpdate|TaskGet|TaskList|TaskStop|TaskOutput|Agent|Skill|ScheduleWakeup|ToolSearch|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"helper/hook_notify.py\"",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"helper/hook_notify.py\"",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"helper/hook_notify.py\"",
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}

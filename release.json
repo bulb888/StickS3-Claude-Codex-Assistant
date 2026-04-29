@@ -1,0 +1,8 @@
+{
+  "version": "0.2.4",
+  "helper_version": "0.2.0",
+  "repo": "bulb888/StickS3-Claude-Codex-Assistant",
+  "notes": "语音小秘书状态提示、发送反馈和短录音提示优化",
+  "firmware_notes": "语音小秘书状态提示、发送反馈和短录音提示优化",
+  "helper_notes": "助手 0.2.0：自更新、诊断导出、发布前体检"
+}

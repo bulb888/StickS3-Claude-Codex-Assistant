@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 135" width="240" height="135" role="img" aria-label="主菜单预览">
+  <rect width="240" height="135" rx="10" fill="#0e1419"/>
+  <rect width="240" height="22" fill="#1b232b"/>
+  <rect y="21" width="240" height="1" fill="#e8976f"/>
+  <text x="22" y="16" font-family="Microsoft YaHei,Arial,sans-serif" font-size="14" fill="#e8eaed">StickS3</text>
+  <text x="212" y="15" font-family="Arial,sans-serif" font-size="10" text-anchor="end" fill="#6e7a87">86%</text>
+  <g font-family="Microsoft YaHei,Arial,sans-serif" font-size="12">
+    <rect x="4" y="24" width="232" height="16" rx="3" fill="#e8976f"/>
+    <text x="10" y="36" fill="#0e1419">Claude 小秘书</text><text x="230" y="36" text-anchor="end" fill="#0e1419">语音输入到 PC</text>
+    <text x="10" y="52" fill="#e8eaed">Codex 小秘书</text><text x="230" y="52" text-anchor="end" fill="#6e7a87">语音输入 Codex</text>
+    <text x="10" y="68" fill="#e8eaed">仪表盘</text><text x="230" y="68" text-anchor="end" fill="#6e7a87">时钟 天气 B站</text>
+    <text x="10" y="84" fill="#e8eaed">红外遥控</text><text x="230" y="84" text-anchor="end" fill="#6e7a87">红外发射工具</text>
+    <text x="10" y="100" fill="#e8eaed">网络电台</text><text x="230" y="100" text-anchor="end" fill="#6e7a87">在线收音机</text>
+    <text x="10" y="116" fill="#e8eaed">本地 OTA 升级</text><text x="230" y="116" text-anchor="end" fill="#6e7a87">无线刷机</text>
+  </g>
+</svg>

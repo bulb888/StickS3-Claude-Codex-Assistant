@@ -1,0 +1,8 @@
+{
+  "version": "0.2.0",
+  "asset": "StickS3ClaudeCodexHelper.exe",
+  "url": "https://github.com/bulb888/StickS3-Claude-Codex-Assistant/releases/latest/download/StickS3ClaudeCodexHelper.exe",
+  "sha256": "c2c82e25954b35b787bfcabc0c7778983fd86ffd14ce4e8ca6e20aeb4627ca7a",
+  "size": 30705497,
+  "notes": "助手 0.2.0：自更新、诊断导出、发布前体检"
+}

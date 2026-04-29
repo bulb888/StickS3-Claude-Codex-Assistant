@@ -1,0 +1,51 @@
+# PlatformIO build + library cache (hundreds of MB, regeneratable)
+.pio/
+build/
+downloads/
+memory/
+upload.log
+
+# PyInstaller build staging + cached logs/config
+helper/build/
+helper/__pycache__/
+helper/diagnostics/
+helper/stick_log.txt
+helper/config.json
+helper/dist/*.exe
+helper/dist/*.zip
+helper/dist/config.json
+helper/dist/diagnostics/
+helper/dist/stick_log.txt
+
+# MacOS / editor cruft
+.DS_Store
+.vscode/
+.idea/
+.claude/settings.local.json
+*.swp
+*.swo
+
+# Python
+*.pyc
+__pycache__/
+.test_tmp/
+src/secrets.h
+
+# Intermediate manual HTML — the .md is source, .pdf is the output
+USER_MANUAL.html
+
+# Generated release bundle
+dist/release/
+
+# Keep only the current latest firmware snapshot in git. Archived binaries
+# belong in GitHub Releases.
+releases/*
+!releases/latest/
+!releases/latest/firmware.bin
+!releases/latest/manifest.json
+!releases/latest/helper.json
+!releases/README.md
+
+# Local/vendor reference copies
+StickS3.pdf
+StickS3.txt
