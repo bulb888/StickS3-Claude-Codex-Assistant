@@ -56,7 +56,6 @@ static void save_settings() {
 void maybe_auto_rotate() {
   if (!s_auto_rotate) return;
   static uint32_t last = 0;
-  static uint8_t  cur_rot = 3;
   if (millis() - last < 250) return;
   last = millis();
 
@@ -67,6 +66,7 @@ void maybe_auto_rotate() {
 
   // Pick rotation based on which axis gravity mostly pulls along.
   // Threshold 0.35g — forgiving so a modest tilt triggers the flip.
+  uint8_t cur_rot = M5.Display.getRotation();
   uint8_t wanted = cur_rot;
   if (fabsf(ax) > fabsf(ay)) {
     if (ax >  0.35f) wanted = 1;
@@ -147,7 +147,7 @@ static void drawDiagnostics(int page) {
   g_canvas.setFont(&fonts::efontCN_12);
   g_canvas.setTextColor(CLR_DIM, CLR_BG);
   g_canvas.setTextDatum(middle_right);
-  g_canvas.drawString(String(page + 1) + "/2", SCR_W - 74, 12);
+  g_canvas.drawString(String(page + 1) + "/3", SCR_W - 74, 12);
 
   int y = 28;
   if (page == 0) {
@@ -162,15 +162,24 @@ static void drawDiagnostics(int page) {
     drawDiagLine(y, "讯飞 API", xf_ok ? "已配置" : "缺失", xf_ok ? CLR_GOOD : CLR_WARN); y += 15;
     time_t now = time(nullptr);
     drawDiagLine(y, "NTP", now > 1700000000 ? "已同步" : "未同步", now > 1700000000 ? CLR_GOOD : CLR_WARN);
-  } else {
+  } else if (page == 1) {
     const esp_partition_t* part = esp_ota_get_running_partition();
     drawDiagLine(y, "版本", String(APP_VERSION), CLR_ACCENT); y += 15;
     drawDiagLine(y, "作者", String(APP_AUTHOR)); y += 15;
     drawDiagLine(y, "OTA 槽", part ? String(part->label) : "未知"); y += 15;
     drawDiagLine(y, "Heap", kbString(ESP.getFreeHeap())); y += 15;
-    drawDiagLine(y, "PSRAM", kbString(ESP.getFreePsram())); y += 15;
+    drawDiagLine(y, "PSRAM", kbString(ESP.getFreePsram()));
+  } else {
     drawDiagLine(y, "亮度", String(s_brightness) + "/10"); y += 15;
-    drawDiagLine(y, "音量", String(s_volume) + "/10");
+    drawDiagLine(y, "音量", String(s_volume) + "/10"); y += 15;
+    drawDiagLine(y, "自动旋转", s_auto_rotate ? "开" : "关"); y += 15;
+    if (s_screen_timeout == 0) {
+      drawDiagLine(y, "自动熄屏", "关");
+    } else if (s_screen_timeout < 60) {
+      drawDiagLine(y, "自动熄屏", String(s_screen_timeout) + " 秒");
+    } else {
+      drawDiagLine(y, "自动熄屏", String(s_screen_timeout / 60) + " 分");
+    }
   }
 
   g_canvas.setFont(&fonts::efontCN_12);
@@ -203,7 +212,7 @@ static void runDiagnostics() {
     if (longpress_sent && !M5.BtnB.isPressed()) return;
 
     if (M5.BtnA.wasPressed() && !longpress_sent) {
-      page = (page + 1) % 2;
+      page = (page + 1) % 3;
       beep_ok();
       drawDiagnostics(page);
     }
