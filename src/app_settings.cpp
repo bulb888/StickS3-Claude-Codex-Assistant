@@ -165,6 +165,7 @@ static void drawDiagnostics(int page) {
   } else {
     const esp_partition_t* part = esp_ota_get_running_partition();
     drawDiagLine(y, "版本", String(APP_VERSION), CLR_ACCENT); y += 15;
+    drawDiagLine(y, "作者", String(APP_AUTHOR)); y += 15;
     drawDiagLine(y, "OTA 槽", part ? String(part->label) : "未知"); y += 15;
     drawDiagLine(y, "Heap", kbString(ESP.getFreeHeap())); y += 15;
     drawDiagLine(y, "PSRAM", kbString(ESP.getFreePsram())); y += 15;

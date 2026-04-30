@@ -16,6 +16,7 @@ constexpr uint32_t CLR_BAD    = 0xF07170u;   // soft red
 constexpr uint32_t CLR_GOOD   = 0x7EE787u;   // soft green
 
 constexpr uint32_t LONG_PRESS_MS = 900;
+constexpr const char* APP_AUTHOR = "国产电灯泡";
 
 // Shared offscreen canvas — draw here, then pushSprite to eliminate flicker.
 extern M5Canvas g_canvas;
