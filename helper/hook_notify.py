@@ -42,6 +42,19 @@ def infer_event(data: dict) -> str:
     return ""
 
 
+def display_prompt(raw: str) -> str:
+    """Extract the user's actual request from IDE-wrapped prompt payloads."""
+    text = (raw or "").replace("\r", "").strip()
+    marker = "## My request"
+    idx = text.rfind(marker)
+    if idx >= 0:
+        tail = text[idx:].split("\n", 1)
+        if len(tail) == 2:
+            text = tail[1].strip()
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    return " ".join(lines)
+
+
 def label_for(data: dict) -> str:
     if data.get("type") == "agent-turn-complete":
         full = (
@@ -111,7 +124,7 @@ def label_for(data: dict) -> str:
                 pass
         return "\x01C" + (full[:30] if full else "（完成）")
     if event == "UserPromptSubmit":
-        p = (data.get("prompt") or "").replace("\n", " ").strip()
+        p = display_prompt(data.get("prompt") or "")
         # \x01U marker tells the board to render in "user-prompt" color.
         return "\x01U" + p[:30]
     if event == "SessionStart":
