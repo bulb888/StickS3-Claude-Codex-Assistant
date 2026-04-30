@@ -125,6 +125,14 @@ def _fresh_default_config():
     return json.loads(json.dumps(DEFAULT_CONFIG, ensure_ascii=False))
 
 
+def _normalize_port(value, default):
+    try:
+        port = int(value)
+    except (TypeError, ValueError):
+        return default
+    return port if 1 <= port <= 65535 else default
+
+
 def load_config():
     if not os.path.exists(CONFIG_PATH):
         cfg = _fresh_default_config()
@@ -147,6 +155,11 @@ def load_config():
     for k, v in DEFAULT_CONFIG.items():
         if k not in cfg:
             cfg[k] = v
+            changed = True
+    for key in ("http_port", "udp_port"):
+        normalized = _normalize_port(cfg.get(key), DEFAULT_CONFIG[key])
+        if cfg.get(key) != normalized:
+            cfg[key] = normalized
             changed = True
     # v0.1.x exposed the release API URL as an editable field. Keep updates
     # pinned to the official project so the UI cannot be misconfigured.
@@ -1299,6 +1312,9 @@ def open_config_dialog():
             udp_port = int(udp_var.get())
         except ValueError:
             messagebox.showerror("错误", "端口必须是数字")
+            return
+        if not (1 <= http_port <= 65535 and 1 <= udp_port <= 65535):
+            messagebox.showerror("错误", "端口必须在 1 到 65535 之间")
             return
         corr = []
         for line in txt.get("1.0", "end").splitlines():
