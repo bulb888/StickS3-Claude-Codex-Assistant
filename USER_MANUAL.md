@@ -33,6 +33,18 @@ USB-C 线插电脑或充电头，充电时屏幕右上角电池图标有闪电�
 
 已有 WiFi 记录时，正常开机会先进入主菜单，WiFi 在后台连接；顶部 WiFi 图标会自动更新。
 
+### 2.1 获取科大讯飞 IAT API
+
+Claude / Codex 小秘书的语音识别使用科大讯飞 **语音听写（流式版）WebAPI**。每个用户需要填自己的三项凭据：
+
+1. 打开 [讯飞开放平台控制台](https://console.xfyun.cn/)，注册或登录账号
+2. 创建一个 **WebAPI 平台应用**
+3. 在应用里添加 **语音听写（流式版）** 服务
+4. 进入应用/服务详情，复制 `APPID`、`APISecret`、`APIKey`
+5. 回到板子 **设置 → WiFi 配网**，把三项填到页面底部
+
+推荐直接复制成 `APPID=... APISecret=... APIKey=...`，粘到"一键粘贴三项"。这样可以减少 `APISecret` 和 `APIKey` 填反的概率。官方接口文档见 [语音听写（流式版）WebAPI](https://www.xfyun.cn/doc/asr/voicedictation/API.html)。
+
 ### 3. 安装 PC 助手（Claude/Codex 小秘书要用）
 
 在你的 Windows 电脑上：
@@ -238,13 +250,14 @@ python helper\publish_release.py --repo OWNER/REPO --notes "固件更新说明" 
 
 **Q: 录音后提示"请先配讯飞 API"**
 - 进 **设置 → WiFi 配网**，按 B 重新打开配网页
+- 如果还没有凭据，先到 [讯飞开放平台控制台](https://console.xfyun.cn/) 创建 WebAPI 应用，并添加 **语音听写（流式版）** 服务
 - 在页面底部填自己的科大讯飞 IAT 应用 `APPID`、`APISecret`、`APIKey`
 - 推荐直接用"一键粘贴三项"，避免把 `APISecret` 和 `APIKey` 填反
 - 保存后重启即可；这三个值会写进板子的 NVS，不需要改源码
 
 **Q: 录音后提示"讯飞鉴权失败 401"**
 - 这表示三项凭据不匹配，不是 WiFi 或小秘书坏了
-- 到科大讯飞控制台确认是同一个 IAT 应用的 `APPID`、`APISecret`、`APIKey`
+- 到科大讯飞控制台确认是同一个 **语音听写（流式版）** 服务里的 `APPID`、`APISecret`、`APIKey`
 - 重新进 **设置 → WiFi 配网** 保存一次，优先用"一键粘贴三项"
 
 **Q: 我要开源给别人用，讯飞 API 怎么办**

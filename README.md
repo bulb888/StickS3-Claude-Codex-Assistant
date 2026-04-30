@@ -42,6 +42,18 @@ APPID / APISecret / APIKey
 
 语音识别需要用户自己的科大讯飞 API。固件不内置真实密钥。
 
+## 获取讯飞 API
+
+Claude / Codex 小秘书使用科大讯飞 **语音听写（流式版）WebAPI**。获取方式：
+
+1. 打开 [讯飞开放平台控制台](https://console.xfyun.cn/)，注册或登录账号
+2. 创建一个 **WebAPI 平台应用**
+3. 在应用里添加 **语音听写（流式版）** 服务
+4. 进入该应用/服务详情，复制 `APPID`、`APISecret`、`APIKey`
+5. 板子进入 **设置 → WiFi 配网**，在页面底部填写三项；推荐直接粘到"一键粘贴三项"
+
+官方接口文档见 [语音听写（流式版）WebAPI](https://www.xfyun.cn/doc/asr/voicedictation/API.html)。`APISecret` 和 `APIKey` 很容易填反，录音后提示 `讯飞鉴权失败 401` 时优先检查这两项。
+
 ## 编译
 
 ```powershell
