@@ -839,7 +839,10 @@ void app_voicekb_run() {
     }
     if (s_state == ST_RECORDING) {
       recordChunk();
-      if (!M5.BtnA.isPressed()) {
+      // Buffer full (~30s): finish now — keeping the "listening" state while
+      // recordChunk silently drops audio would lose everything said after.
+      bool pcm_full = (s_pcm_len + 512 > MAX_SAMPLES);
+      if (!M5.BtnA.isPressed() || pcm_full) {
         stopRecording();
         if (s_pcm_len < SAMPLE_RATE / 4) {
           s_status_text = "录音太短";

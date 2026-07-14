@@ -276,6 +276,7 @@ void app_radio_run() {
     bool b_long = false;
     while (true) {
       M5.update();
+      if (screen_saver_tick()) { delay(20); continue; }
       if (M5.BtnB.pressedFor(LONG_PRESS_MS)) {
         if (!b_long) { beep_ok(); b_long = true; }
       }

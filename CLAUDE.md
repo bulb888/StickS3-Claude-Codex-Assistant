@@ -15,7 +15,7 @@ M5Stack StickS3（ESP32-S3-PICO-1-N8R8，8MB Flash + 8MB PSRAM，1.14" LCD 135x2
 │   ├── menu.cpp                      # 主菜单（当前 7 项，顺序见下）
 │   ├── wifi_mgr.cpp                  # WiFiManager 配网（城市码+B站UID+讯飞三项）+ 首次设置摘要 + NTP
 │   ├── app_clock.cpp                 # 仪表盘：NTP 时钟 + 天气 + B 站粉丝（NVS 可配置）
-│   ├── app_ir.cpp                    # 红外学习/回放（4 个槽位，NVS 存储）
+│   ├── app_ir.cpp                    # 红外发射（预置 NEC 码表 16 键 + 4 种编码模式，无学习功能）
 │   ├── app_radio.cpp                 # 网络电台（22 台，ESP32-audioI2S）— 见"电台 I2S 接力"
 │   ├── app_voicekb.cpp               # Claude 小秘书（讯飞 STT + PC 助手 + 活动日志）
 │   ├── app_codex.cpp                 # Codex 小秘书（讯飞 STT + PC 助手 + Codex Hooks 状态）
@@ -37,9 +37,9 @@ M5Stack StickS3（ESP32-S3-PICO-1-N8R8，8MB Flash + 8MB PSRAM，1.14" LCD 135x2
 1. **Claude 小秘书** — 语音输入到 PC + 实时显示 Claude 活动
 2. **Codex 小秘书** — 语音输入到 Codex + 实时显示 Codex 状态
 3. **仪表盘** — 时钟 / 天气 / B 站粉丝（城市码和 UID 进 WiFi 配网页填）
-4. **红外遥控** — 学习 / 回放
+4. **红外遥控** — 预置码发射（A 换键 / 长按 A 换编码模式 / B 发送）
 5. **网络电台** — 在线收音机（22 台）
-6. **OTA 升级** — 无线烧录固件
+6. **本地 OTA 升级** — 无线烧录固件
 7. **设置** — 音量 / 亮度 / 屏幕超时 / 自动旋转 / WiFi 配网 / 远程 OTA / 系统诊断；设置页按 4 项分页显示
 
 ## 构建和烧录

@@ -132,7 +132,8 @@ void app_ota_run() {
     ArduinoOTA.begin();
     ota_configured = true;
   } else {
-    // Just re-begin in case previous session ended.
+    // Callbacks persist across end()/begin(); re-begin restarts the UDP
+    // listener we shut down on the previous exit.
     ArduinoOTA.begin();
   }
 
@@ -166,6 +167,10 @@ void app_ota_run() {
         if (!longpress_sent) longpress_sent = true;
       }
       if (longpress_sent && !M5.BtnB.isPressed()) {
+        // Stop the OTA UDP listener so espota attempts made while we're in
+        // other apps fail fast instead of hanging with no handle() to serve
+        // them. Re-entering this app calls begin() again.
+        ArduinoOTA.end();
         M5.Speaker.begin();
         apply_volume();
         return;

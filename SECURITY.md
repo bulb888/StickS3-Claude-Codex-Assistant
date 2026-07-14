@@ -22,6 +22,26 @@ enter their own iFlytek IAT `APPID`, `APISecret`, and `APIKey` through the
 StickS3 WiFi setup page, or keep local developer defaults in ignored
 `src/secrets.h`.
 
+## LAN trust model (PC helper)
+
+The Windows helper listens on `0.0.0.0` so the StickS3 board can reach it over
+WiFi. Its HTTP interface is **unauthenticated by design**:
+
+- `POST /type` and `POST /codex/type` paste text and press Enter on the PC.
+  Any device on the same LAN can call them — treat every network that the
+  helper runs on as trusted (a home LAN behind NAT, not public WiFi).
+- `POST /log`, `POST /status`, and the UDP discovery responder are similarly
+  open to the local network.
+
+Mitigations if your LAN is shared with untrusted devices:
+
+- Run the helper only while you are using the voice assistant, and quit it
+  from the tray afterwards.
+- Restrict the helper's port (default 8765/TCP and 8766/UDP) to the board's
+  IP with Windows Defender Firewall inbound rules.
+- Disable UDP discovery in the tray config dialog once the board has cached
+  the helper address (it re-discovers only when the cached address fails).
+
 ## Firmware and release assets
 
 Release firmware may contain public strings such as the GitHub OTA manifest URL,

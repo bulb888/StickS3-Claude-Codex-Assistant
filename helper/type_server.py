@@ -126,6 +126,8 @@ def _fresh_default_config():
 
 
 def _normalize_port(value, default):
+    if isinstance(value, bool):  # bool is an int subclass; True would become port 1
+        return default
     try:
         port = int(value)
     except (TypeError, ValueError):
@@ -566,6 +568,21 @@ _status_lock = threading.Lock()
 # different worker threads and long multi-line entries can interleave
 # without a lock.
 _log_file_lock = threading.Lock()
+LOG_MAX_BYTES = 5 * 1024 * 1024
+
+
+def _rotate_log_if_needed():
+    """Cap stick_log.txt at LOG_MAX_BYTES: keep one .1 backup, start fresh.
+    Must be called with _log_file_lock held."""
+    try:
+        if os.path.getsize(LOG_FILE) < LOG_MAX_BYTES:
+            return
+        backup = LOG_FILE + ".1"
+        if os.path.exists(backup):
+            os.remove(backup)
+        os.replace(LOG_FILE, backup)
+    except OSError:
+        pass
 _status_log = deque(maxlen=16)
 _seq = 0
 _codex_status_log = deque(maxlen=16)
@@ -608,8 +625,10 @@ def add_status(text: str, channel: str = "claude") -> int | None:
         if channel == "codex":
             _codex_phase = _codex_phase_for_text(text)
     try:
-        with _log_file_lock, open(LOG_FILE, "a", encoding="utf-8") as f:
-            f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] [{label}] {text}\n")
+        with _log_file_lock:
+            _rotate_log_if_needed()
+            with open(LOG_FILE, "a", encoding="utf-8") as f:
+                f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] [{label}] {text}\n")
     except Exception as e:
         print(f"[warn] status→log write failed: {e}")
     return seq
@@ -839,9 +858,11 @@ class Handler(BaseHTTPRequestHandler):
             src_ip = self.client_address[0] if self.client_address else "?"
             if line:
                 try:
-                    with _log_file_lock, open(LOG_FILE, "a", encoding="utf-8") as f:
-                        f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] "
-                                f"[{level}] [from {src_ip}] {line}\n")
+                    with _log_file_lock:
+                        _rotate_log_if_needed()
+                        with open(LOG_FILE, "a", encoding="utf-8") as f:
+                            f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] "
+                                    f"[{level}] [from {src_ip}] {line}\n")
                 except Exception as e:
                     print(f"[warn] log write failed: {e}")
             self._send_json(200, {"ok": True})
@@ -1148,7 +1169,22 @@ def format_target_status(config_key="target_window", label="Claude"):
     return f"{label}: {title}{suffix}"
 
 
+_config_dialog_guard = threading.Lock()
+
+
 def open_config_dialog():
+    # A second tkinter mainloop in another thread can crash the process —
+    # ignore repeat clicks while a dialog is already open.
+    if not _config_dialog_guard.acquire(blocking=False):
+        print("[warn] config dialog already open")
+        return
+    try:
+        _open_config_dialog()
+    finally:
+        _config_dialog_guard.release()
+
+
+def _open_config_dialog():
     try:
         import tkinter as tk
         from tkinter import ttk, messagebox
@@ -1419,7 +1455,7 @@ def on_bind_target(icon=None, item=None, config_key="target_window", label="Clau
             except Exception: pass
             time.sleep(1)
         info = capture_current_window()
-        try: icon.title = f"StickS3 小秘书 — {local_ip()}:{CONFIG['http_port']}"
+        try: icon.title = _tray_base_title()
         except Exception: pass
         if not info:
             print("[bind] no foreground window captured")
@@ -1464,7 +1500,7 @@ def on_bind_click(icon=None, item=None, config_key="target_window", click_key="t
             except Exception: pass
             time.sleep(1)
         pos = capture_click_position(config_key)
-        try: icon.title = f"StickS3 小秘书 — {local_ip()}:{CONFIG['http_port']}"
+        try: icon.title = _tray_base_title()
         except Exception: pass
         if not pos:
             print(f"[bind:{label}] input click position capture failed")
@@ -1541,7 +1577,7 @@ def start_tray():
         return
 
     ip = local_ip()
-    title = f"StickS3 小秘书 — {ip}:{CONFIG['http_port']}"
+    title = _tray_base_title()
 
     menu = pystray.Menu(
         pystray.MenuItem(f"IP: {ip}:{CONFIG['http_port']}", None, enabled=False),

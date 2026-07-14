@@ -256,7 +256,7 @@ static void drawUI() {
     g_canvas.drawString(SETTINGS_LABELS[i], 8, y + 8);
 
     if (i == ROW_VOLUME || i == ROW_BRIGHTNESS) {
-      int v = (i == 0) ? s_volume : s_brightness;
+      int v = (i == ROW_VOLUME) ? s_volume : s_brightness;
       int maxv = 10;
       char vbuf[8]; snprintf(vbuf, sizeof(vbuf), "%d", v);
       g_canvas.setTextDatum(middle_right);
