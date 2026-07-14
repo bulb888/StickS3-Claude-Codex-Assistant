@@ -883,7 +883,12 @@ class Handler(BaseHTTPRequestHandler):
         else:
             print(f"[warn] paste_and_enter returned False for: {fixed}")
 
-        self._send_json(200, {"ok": bool(ok), "chars": len(fixed)})
+        if ok:
+            self._send_json(200, {"ok": True, "chars": len(fixed)})
+        else:
+            # Non-200 so the board reports "PC 发送失败" instead of "已发送" —
+            # it only checks the HTTP status code, not the body.
+            self._send_json(500, {"ok": False, "error": "paste failed"})
 
     def log_message(self, *args, **kwargs):
         pass

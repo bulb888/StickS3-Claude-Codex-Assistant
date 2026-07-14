@@ -19,6 +19,33 @@ import sys
 import urllib.request
 
 TIMEOUT    = 0.8
+DEFAULT_HELPER_PORT = 8765
+
+
+def helper_port(base_dir: str | None = None) -> int:
+    """Resolve the helper's HTTP port. Priority: STICKS3_HELPER_PORT env var,
+    then http_port from helper/config.json (or its dist/ copy, where the
+    packaged exe keeps it), else the default 8765. Keeps hooks working when
+    the user changes the port in the tray config dialog."""
+    env = os.environ.get("STICKS3_HELPER_PORT", "").strip()
+    if env:
+        try:
+            port = int(env)
+            if 1 <= port <= 65535:
+                return port
+        except ValueError:
+            pass
+    here = base_dir or os.path.dirname(os.path.abspath(__file__))
+    for cfg_path in (os.path.join(here, "config.json"),
+                     os.path.join(here, "dist", "config.json")):
+        try:
+            with open(cfg_path, encoding="utf-8") as f:
+                port = int(json.load(f).get("http_port") or 0)
+        except Exception:
+            continue
+        if 1 <= port <= 65535:
+            return port
+    return DEFAULT_HELPER_PORT
 
 # Display tool events in the Claude-Code terminal style:
 #   Bash(echo hi)
@@ -139,7 +166,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--channel", choices=("claude", "codex"), default=os.environ.get("STICKS3_CHANNEL", "claude"))
     args, rest = parser.parse_known_args()
-    helper_url = "http://localhost:8765/codex/status" if args.channel == "codex" else "http://localhost:8765/status"
+    port = helper_port()
+    path = "/codex/status" if args.channel == "codex" else "/status"
+    helper_url = f"http://localhost:{port}{path}"
 
     try:
         if rest:

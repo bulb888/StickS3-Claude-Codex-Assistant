@@ -42,7 +42,12 @@ bool screen_saver_tick() {
       screen_saver_kick();
       return true;
     }
+    // The wake press was just released — swallow this tick too, so its
+    // wasReleased() event can't fire an app action (settings +1, IR send,
+    // radio station switch, voice test message...).
     s_swallow_until_release = false;
+    screen_saver_kick();
+    return true;
   }
 
   // Any button state = activity. `isPressed` covers held buttons too.

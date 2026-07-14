@@ -786,9 +786,13 @@ void app_voicekb_run() {
     // Independent UI refresh. Faster when Claude is "busy" so the mascot
     // pulse animation is visible; slower when idle to save CPU/flicker.
     // Consider pending queue too so refresh speeds up even before reveal.
+    // Busy = anything except a \x01C "reply finished" marker — same
+    // classification drawRightColumn uses for the pulse animation.
     auto _is_busy_line = [](const String& s) {
-      return s.startsWith("执行") || s.startsWith("编辑")
-          || s.startsWith("读")   || s.startsWith("思考中");
+      if (s.length() >= 2 && (uint8_t)s.charAt(0) == 0x01) {
+        return s.charAt(1) != 'C';
+      }
+      return true;
     };
     bool busy = false;
     if (s_pending_n > 0)          busy = _is_busy_line(s_pending[s_pending_n-1]);
